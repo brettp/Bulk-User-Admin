@@ -14,11 +14,23 @@ $title = elgg_view_title(elgg_echo('admin:user'));
 
 set_context('search');
 
-$users = elgg_get_entities(array(
+$options = array(
 	'type' => 'user',
 	'limit' => $limit,
 	'offset' => $offset,
 	'full_view' => false
+);
+
+$users = elgg_get_entities($options);
+
+$options['count'] = true;
+
+$users_count = elgg_get_entities($options);
+
+$pagination = elgg_view('navigation/pagination', array(
+	'baseurl' => current_page_url(),
+	'offset' => $offset,
+	'count' => $users_count
 ));
 
 $form_body = '';
@@ -42,6 +54,6 @@ $form = elgg_view('input/form', array(
 
 set_context('admin');
 
-$content = $title . elgg_view('admin/user') . $form;
+$content = $title . elgg_view('admin/user') . $pagination . $form . $pagination;
 $body = elgg_view_layout('two_column_left_sidebar', '', $content);
 page_draw(elgg_echo("admin:user"), $body);
