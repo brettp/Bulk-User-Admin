@@ -35,7 +35,7 @@ $metadata = (int) $data[0]->count;
 // the CSS for classless <label> is really, really annoying.
 $info = <<<___HTML
 <label style="font-size: inherit; font-weight: inherit; color: inherit;">
-<p>$checkbox $user->name | $user->guid | $user->username | $user->email</p>
+<p>$checkbox $user->name | $user->username | $user->email | $user->guid </p>
 <p>Last login: $last_login | First login: $first_login | Last action: $last_action</p>
 <p>Objects: $objects | Annotations: $annotations | Metadata: $metadata</p>
 ___HTML;
