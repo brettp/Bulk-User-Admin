@@ -13,7 +13,7 @@ $domain = get_input('domain');
 $context = get_context();
 
 if (!$domain) {
-	$title = elgg_view_title(elgg_echo('admin:user'));
+	$title = elgg_echo('admin:user');
 } else {
 	$title = "Users in domain $domain";
 }
