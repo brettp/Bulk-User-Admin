@@ -76,7 +76,6 @@ function bulk_user_admin_admin_page_setup() {
 	global $CONFIG;
 
 	if (get_context() == 'admin' && isadminloggedin()) {
-		add_submenu_item('Find/delete users by email', $CONFIG->url . "pg/admin/user/delete_by_email");
 		add_submenu_item('Email domain stats', $CONFIG->url . "pg/admin/user/email_domain_stats");
 	}
 }
