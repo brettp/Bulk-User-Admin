@@ -6,4 +6,6 @@ GPL 2
 
 About
 =====
-Adds ability to bulk delete / ban users from the admin section.
+Adds ability to bulk delete users from the admin section.
+
+Adds menu to display users by domain and the most common domains registered.
