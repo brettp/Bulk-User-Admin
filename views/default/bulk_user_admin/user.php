@@ -2,7 +2,7 @@
 /**
  * Show a user for bulk actions. Includes a checkbox on the left.
  */
-
+if($vars['entity'] instanceof ElggUser){
 $icon =	elgg_view_entity_icon($vars['entity'], 'small');
 
 $banned = $vars['entity']->isBanned();
@@ -45,4 +45,5 @@ if ($banned) {
 
 $info .= '</label>';
 
-echo elgg_view_listing($icon, $info);
+echo elgg_view('page/components/image_block', array('image' => $icon, 'body' => $info));
+}
