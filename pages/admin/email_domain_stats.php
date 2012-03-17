@@ -16,8 +16,8 @@ $domain_list = elgg_view('page_elements/contentwrapper', array(
 	'body' => $domain_list
 ));
 
-set_context('admin');
+elgg_set_context('admin');
 
 $content = $title_str . $domain_list;
-$body = elgg_view_layout('two_column_left_sidebar', '', $content);
-page_draw($title, $body);
+$body = elgg_view_layout('one_sidebar', array('content' => $content));
+echo elgg_view_page($title, $body);

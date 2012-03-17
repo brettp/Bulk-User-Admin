@@ -22,7 +22,7 @@ foreach ($domains as $domain_info) {
 		'href' => $domain_info->domain
 	));
 
-	$url = elgg_http_add_url_query_elements($vars['url'] . 'pg/admin/user', array('domain' => $domain_info->domain));
+	$url = elgg_http_add_url_query_elements($vars['url'] . 'admin/user', array('domain' => $domain_info->domain));
 	$users = elgg_view('output/url', array(
 		'text' => $domain_info->count,
 		'href' => $url
