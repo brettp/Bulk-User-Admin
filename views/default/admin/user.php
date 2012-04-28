@@ -10,18 +10,15 @@ $limit = get_input('limit', 10);
 $offset = get_input('offset', 0);
 $domain = get_input('domain');
 
-$context = get_context();
+$context = elgg_get_context();
 
 if (!$domain) {
 	$title = elgg_echo('admin:user');
 } else {
-	$title = "Users in domain $domain";
+	$title = "Users in the domain $domain";
 }
 
-// has to be here or the sidemenu is buggered because of pagesetup hook bs
-$title_str = elgg_view_title($title);
-
-set_context('search');
+elgg_set_context('search');
 
 $options = array(
 	'type' => 'user',
@@ -52,45 +49,43 @@ foreach ($users as $user) {
 }
 
 $delete_button = elgg_view('input/submit', array(
-	'value' => 'Delete checked'
+	'value' => 'Delete checked',
 ));
 
-$form_body .= elgg_view('page_elements/contentwrapper', array(
-	'body' => $delete_button
-));
+$form_body .= $delete_button;
 
-$site = get_config('site');
+$site = elgg_get_config('site');
+
 $checked_form = elgg_view('input/form', array(
 	'action' =>  $site->url . 'action/bulk_user_admin/delete',
 	'body' => $form_body
 ));
 
+
 $domain_form = '';
 
 if ($domain) {
-	$delete_button = elgg_view('input/submit', array(
-		'value' => 'Delete all in domain'
+	$delete_button = "<br /><br />" . elgg_view('input/submit', array(
+		'value' => 'Delete all in domain',
 	));
 
 	$hidden = elgg_view('input/hidden', array(
-		'internalname' => 'domain',
+		'name' => 'domain',
 		'value' => $domain
 	));
 
-	$form_body = elgg_view('page_elements/contentwrapper', array(
-		'body' => $delete_button . $hidden
-	));
+	$form_body = $delete_button . $hidden;
 
 	$domain_form = elgg_view('input/form', array(
 		'action' =>  $site->url . 'action/bulk_user_admin/delete_by_domain',
 		'body' => $form_body
 	));
+
 }
 
-$summary = "$users_count users found";
+$summary = "<div>$users_count user(s) found</div>";
 
 if ($domain) {
-	$summary .= " in domain $domain";
 	$summary .= '<br />';
 	$summary .= elgg_view('output/url', array(
 		'href' => elgg_http_remove_url_query_element(current_page_url(), 'domain'),
@@ -98,12 +93,6 @@ if ($domain) {
 	));
 }
 
-$summary = elgg_view('page_elements/contentwrapper', array(
-	'body' => $summary
-));
+elgg_set_context('admin');
 
-set_context('admin');
-
-$content = $title_str . elgg_view('admin/user') . $summary . $pagination . $checked_form . $domain_form . $pagination;
-$body = elgg_view_layout('two_column_left_sidebar', '', $content);
-page_draw($title, $body);
+echo $title . $summary . $pagination . $checked_form . $domain_form . $pagination;

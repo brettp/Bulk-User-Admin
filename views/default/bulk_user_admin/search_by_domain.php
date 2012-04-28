@@ -8,7 +8,7 @@
 	<b>Search by email domain</b>
 	<?php
 
-		echo elgg_view('input/text', array('internalname' => 'domain'));
+		echo elgg_view('input/text', array('name' => 'domain'));
 
 	?>
 	<input type="submit" value="Search by domain" />
