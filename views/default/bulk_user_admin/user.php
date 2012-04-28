@@ -2,13 +2,8 @@
 /**
  * Show a user for bulk actions. Includes a checkbox on the left.
  */
-
-$icon = elgg_view(
-		"profile/icon", array(
-								'entity' => $vars['entity'],
-								'size' => 'small',
-							)
-	);
+if($vars['entity'] instanceof ElggUser){
+$icon =	elgg_view_entity_icon($vars['entity'], 'small');
 
 $banned = $vars['entity']->isBanned();
 $user = $vars['entity'];
@@ -22,7 +17,7 @@ $objects = elgg_get_entities(array(
 	'count' => true
 ));
 
-$db_prefix = get_config('dbprefix');
+$db_prefix = elgg_get_config('dbprefix');
 
 $q = "SELECT COUNT(id) as count FROM {$db_prefix}annotations WHERE owner_guid = $user->guid";
 $data = get_data($q);
@@ -50,4 +45,5 @@ if ($banned) {
 
 $info .= '</label>';
 
-echo elgg_view_listing($icon, $info);
+echo elgg_view('page/components/image_block', array('image' => $icon, 'body' => $info));
+}

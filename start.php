@@ -7,42 +7,19 @@
  * Init
  */
 function bulk_user_admin_init() {
-	// need to intercept the page handler to use our own page scripts
-	// because the original scripts change context to search instead of admin.
-	register_page_handler('admin', 'bulk_user_admin_page_handler');
-
-	register_elgg_event_handler('pagesetup', 'system', 'bulk_user_admin_admin_page_setup');
+	elgg_register_event_handler('pagesetup', 'system', 'bulk_user_admin_admin_page_setup');
 
 	elgg_extend_view('admin/user_opt/search', 'bulk_user_admin/search_by_domain');
-	elgg_extend_view('css', 'bulk_user_admin/css');
+	elgg_extend_view('css/admin', 'bulk_user_admin/css');
 
-	register_action('bulk_user_admin/delete', false, dirname(__FILE__) . '/actions/bulk_user_admin/delete.php', true);
-	register_action('bulk_user_admin/delete_by_domain', false, dirname(__FILE__) . '/actions/bulk_user_admin/delete_by_domain.php', true);
+	elgg_register_action('bulk_user_admin/delete', dirname(__FILE__) . '/actions/bulk_user_admin/delete.php', 'admin');
+	elgg_register_action('bulk_user_admin/delete_by_domain', dirname(__FILE__) . '/actions/bulk_user_admin/delete_by_domain.php', 'admin');
 
-
-}
-
-/**
- * Serve our special users page or fall back to the core admin page handler
- *
- * @param array $page
- */
-function bulk_user_admin_page_handler($page) {
-	admin_gatekeeper();
-	if ($page[0] == 'user') {
-		if (isset($page[1]) && $page[1] == 'email_domain_stats') {
-			include dirname(__FILE__) . '/pages/admin/email_domain_stats.php';
-		} else {
-			include dirname(__FILE__) . '/pages/admin/user.php';
-		}
-	} else {
-		admin_settings_page_handler($page);
-	}
 }
 
 function bulk_user_admin_get_users_by_email_domain($domain, $options = array()) {
 	$domain = sanitise_string($domain);
-	$db_prefix = get_config('dbprefix');
+	$db_prefix = elgg_get_config('dbprefix');
 	
 	$where = "ue.email LIKE '%@$domain'";
 	if (!isset($options['wheres'])) {
@@ -70,18 +47,16 @@ function bulk_user_admin_get_users_by_email_domain($domain, $options = array()) 
 }
 
 /**
- * Sets up tidypics admin menu. Triggered on pagesetup.
+ * Sets up admin menu. Triggered on pagesetup.
  */
 function bulk_user_admin_admin_page_setup() {
-	global $CONFIG;
-
-	if (get_context() == 'admin' && isadminloggedin()) {
-		add_submenu_item('Email domain stats', $CONFIG->url . "pg/admin/user/email_domain_stats");
+	if (elgg_get_context() == 'admin' && elgg_is_admin_logged_in()) {
+	    elgg_register_admin_menu_item('administer', 'email_domain_stats', 'users');
 	}
 }
 
 function bulk_user_admin_get_email_domain_stats() {
-	$db_prefix = get_config('dbprefix');
+	$db_prefix = elgg_get_config('dbprefix');
 	$q = "SELECT email, substring_index(email, '@', -1) as domain, count(*) as count
 		FROM {$db_prefix}users_entity ue
 		JOIN {$db_prefix}entities e ON ue.guid = e.guid
@@ -91,4 +66,4 @@ function bulk_user_admin_get_email_domain_stats() {
 	return get_data($q);
 }
 
-register_elgg_event_handler('init', 'system', 'bulk_user_admin_init');
+elgg_register_event_handler('init', 'system', 'bulk_user_admin_init');
