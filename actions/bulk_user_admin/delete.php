@@ -4,6 +4,12 @@
  */
 
 $guids = get_input('bulk_user_admin_guids');
+
+if (!$guids) {
+	register_error('Nothing to delete.');
+	forward(REFERER);
+}
+
 $errors = array();
 $count = 0;
 $batch = new ElggBatch('elgg_get_entities', array('guids' => $guids, 'limit' => 0));
