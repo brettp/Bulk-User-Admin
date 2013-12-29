@@ -11,7 +11,7 @@ $users = elgg_extract('users', $vars);
 	<tr>
 		<th>&nbsp;</th>
 		<th>&nbsp;</th>
-		<th>Name (Username, GUID)</th>
+		<th>Name (Username, GUID)<br />Profile Info</th>
 		<th>Email</th>
 		<th>Time created<br />Last login</th>
 		<th>Last action</th>
@@ -56,11 +56,26 @@ $users = elgg_extract('users', $vars);
 			$banned = '<br />Banned: ' . $user->ban_reason;
 		}
 
+		// profile stuff
+		// @todo eventually support custom fields
+//		$fields = elgg_get_config('profile_fields');
+
+		// brief desc seems to get used more often than desc
+		$profile = $user->briefdescription;
+		if (!$profile) {
+			$profile = $user->description;
+		}
+
+		if ($profile) {
+			$profile_short = elgg_get_excerpt($profile);
+			$profile = '<br /><acronym title="' . htmlentities($profile) . '">' . $profile_short . '</acronym>';
+		}
+
 		echo <<<___HTML
 	<tr $tr_class>
 		<td><label for="elgg-user-$user->guid">$checkbox</label></td>
 		<td>$icon</td>
-		<td><label for="elgg-user-$user->guid">$user->name ($user->username, $user->guid)$banned</label></td>
+		<td><label for="elgg-user-$user->guid">$user->name ($user->username, $user->guid) $banned $profile</label></td>
 		<td><label for="elgg-user-$user->guid">$user->email</label></td>
 		<td><label for="elgg-user-$user->guid">$time_created<br />$last_login</label></td>
 		<td><label for="elgg-user-$user->guid">$last_action</label></td>
