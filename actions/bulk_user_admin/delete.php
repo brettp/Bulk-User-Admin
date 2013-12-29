@@ -5,17 +5,20 @@
 
 $guids = get_input('bulk_user_admin_guids');
 $errors = array();
+$count = 0;
+$batch = new ElggBatch('elgg_get_entities', array('guids' => $guids, 'limit' => 0));
+$batch->setIncrementOffset(false);
 
-foreach ($guids as $guid) {
-	$user = get_entity($guid);
-
+foreach ($batch as $user) {
 	if (!$user instanceof ElggUser) {
-		$errors[] = "$guid is not a user.";
+		$errors[] = "$user->guid is not a user.";
 		continue;
 	}
 
-	if (!$user->delete()) {
-		$errors[] = "Could not delete $user->name ($user->username).";
+	if ($user->delete()) {
+		$count++;
+	} else {
+		$errors[] = "Could not delete $user->name ($user->username, $user->guid).";
 	}
 }
 
@@ -24,7 +27,7 @@ if ($errors) {
 		register_error($error);
 	}
 } else {
-	system_message("Users deleted.");
+	system_message("Users deleted: $count");
 }
 
 forward(REFERER);

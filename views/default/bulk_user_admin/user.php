@@ -2,8 +2,11 @@
 /**
  * Show a user for bulk actions. Includes a checkbox on the left.
  */
-if($vars['entity'] instanceof ElggUser){
-$icon =	elgg_view_entity_icon($vars['entity'], 'small');
+if (!$vars['entity'] instanceof ElggUser) {
+	return true;
+}
+
+$icon = elgg_view_entity_icon($vars['entity'], 'small');
 
 $banned = $vars['entity']->isBanned();
 $user = $vars['entity'];
@@ -15,7 +18,7 @@ $last_action = elgg_view_friendly_time($user->last_action);
 $objects = elgg_get_entities(array(
 	'owner_guid' => $user->guid,
 	'count' => true
-));
+		));
 
 $db_prefix = elgg_get_config('dbprefix');
 
@@ -27,7 +30,6 @@ $q = "SELECT COUNT(id) as count FROM {$db_prefix}metadata WHERE owner_guid = $us
 $data = get_data($q);
 $metadata = (int) $data[0]->count;
 
-// the CSS for classless <label> is really, really annoying.
 $info = <<<___HTML
 <label style="font-size: inherit; font-weight: inherit; color: inherit;">
 <p>$checkbox $user->name | $user->username | $user->email | $user->guid </p>
@@ -46,4 +48,3 @@ if ($banned) {
 $info .= '</label>';
 
 echo elgg_view('page/components/image_block', array('image' => $icon, 'body' => $info));
-}

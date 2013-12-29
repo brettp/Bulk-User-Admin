@@ -9,16 +9,11 @@
 $limit = get_input('limit', 10);
 $offset = get_input('offset', 0);
 $domain = get_input('domain');
+$title = '';
 
-$context = elgg_get_context();
-
-if (!$domain) {
-	$title = elgg_echo('admin:user');
-} else {
+if ($domain) {
 	$title = "Users in the domain $domain";
 }
-
-elgg_set_context('search');
 
 $options = array(
 	'type' => 'user',
@@ -38,29 +33,16 @@ if ($domain) {
 }
 
 $pagination = elgg_view('navigation/pagination', array(
-	'baseurl' => current_page_url(),
+	'base_url' => current_page_url(),
 	'offset' => $offset,
 	'count' => $users_count
 ));
 
-$form_body = '';
-foreach ($users as $user) {
-	$form_body .= elgg_view('bulk_user_admin/user', array('entity' => $user));
-}
+$form_vars = array(
+	'users' => $users,
+);
 
-$delete_button = elgg_view('input/submit', array(
-	'value' => 'Delete checked',
-));
-
-$form_body .= $delete_button;
-
-$site = elgg_get_config('site');
-
-$checked_form = elgg_view('input/form', array(
-	'action' =>  $site->url . 'action/bulk_user_admin/delete',
-	'body' => $form_body
-));
-
+$form = elgg_view_form('bulk_user_admin/delete', array(), $form_vars);
 
 $domain_form = '';
 
@@ -95,4 +77,4 @@ if ($domain) {
 
 elgg_set_context('admin');
 
-echo $title . $summary . $pagination . $checked_form . $domain_form . $pagination;
+echo $title . $summary . $pagination . $form . $domain_form . $pagination;
