@@ -16,6 +16,13 @@ function bulk_user_admin_init() {
 	elgg_register_action('bulk_user_admin/delete_by_domain', dirname(__FILE__) . '/actions/bulk_user_admin/delete_by_domain.php', 'admin');
 }
 
+/**
+ * Return users by email domain
+ *
+ * @param type $domain
+ * @param type $options
+ * @return array
+ */
 function bulk_user_admin_get_users_by_email_domain($domain, $options = array()) {
 	$domain = sanitise_string($domain);
 	$db_prefix = elgg_get_config('dbprefix');
@@ -55,6 +62,11 @@ function bulk_user_admin_admin_page_setup() {
 	}
 }
 
+/**
+ * Get number of users per email domain
+ *
+ * @return array
+ */
 function bulk_user_admin_get_email_domain_stats() {
 	$db_prefix = elgg_get_config('dbprefix');
 	$q = "SELECT email, substring_index(email, '@', -1) as domain, count(*) as count

@@ -5,6 +5,9 @@
 
 $db_prefix = elgg_get_config('dbprefix');
 $users = elgg_extract('users', $vars);
+
+// profile fields
+$fields = elgg_get_config('profile_fields');
 ?>
 
 <table class="elgg-table bulk-user-admin-users">
@@ -56,26 +59,30 @@ $users = elgg_extract('users', $vars);
 			$banned = '<br />Banned: ' . $user->ban_reason;
 		}
 
-		// profile stuff
-		// @todo eventually support custom fields
-//		$fields = elgg_get_config('profile_fields');
+		$profile_field_tmp = array();
 
-		// brief desc seems to get used more often than desc
-		$profile = $user->briefdescription;
-		if (!$profile) {
-			$profile = $user->description;
+		foreach (array_keys($fields) as $md_name) {
+			$value = $user->$md_name;
+			
+			if ($value) {
+				$value_short = elgg_get_excerpt($value, 100);
+
+				$profile_field_tmp[] = elgg_echo('profile:' . $md_name) . ': '
+						. '<acronym title="' . strip_tags(htmlentities($value)) . '">'
+						. $value_short . '</acronym>';
+			}
 		}
 
-		if ($profile) {
-			$profile_short = elgg_get_excerpt($profile);
-			$profile = '<br /><acronym title="' . htmlentities($profile) . '">' . $profile_short . '</acronym>';
+		$profile_fields = implode("<br />", $profile_field_tmp);
+		if ($profile_fields) {
+			$profile_fields = "<br />$profile_fields";
 		}
 
 		echo <<<___HTML
 	<tr $tr_class>
 		<td><label for="elgg-user-$user->guid">$checkbox</label></td>
 		<td>$icon</td>
-		<td><label for="elgg-user-$user->guid">$user->name ($user->username, $user->guid) $banned $profile</label></td>
+		<td><label for="elgg-user-$user->guid">$user->name ($user->username, $user->guid) $banned $profile_fields</label></td>
 		<td><label for="elgg-user-$user->guid">$user->email</label></td>
 		<td><label for="elgg-user-$user->guid">$time_created<br />$last_login</label></td>
 		<td><label for="elgg-user-$user->guid">$last_action</label></td>
