@@ -3,17 +3,20 @@
  * Allow bulk delete operations
  */
 
+elgg_register_event_handler('init', 'system', 'bulk_user_admin_init');
+
 /**
  * Init
  */
 function bulk_user_admin_init() {
-	elgg_register_event_handler('pagesetup', 'system', 'bulk_user_admin_admin_page_setup');
-
-	elgg_extend_view('admin/user_opt/search', 'bulk_user_admin/search_by_domain');
 	elgg_extend_view('css/admin', 'bulk_user_admin/css');
 
-	elgg_register_action('bulk_user_admin/delete', dirname(__FILE__) . '/actions/bulk_user_admin/delete.php', 'admin');
-	elgg_register_action('bulk_user_admin/delete_by_domain', dirname(__FILE__) . '/actions/bulk_user_admin/delete_by_domain.php', 'admin');
+	elgg_register_admin_menu_item('administer', 'email_domain_stats', 'users');
+	elgg_register_admin_menu_item('administer', 'bulk_user_admin', 'users');
+
+	$base_dir = elgg_get_plugins_path() . 'bulk_user_admin/actions/bulk_user_admin';
+	elgg_register_action('bulk_user_admin/delete', $base_dir . '/delete.php', 'admin');
+	elgg_register_action('bulk_user_admin/delete_by_domain', $base_dir . '/delete_by_domain.php', 'admin');
 }
 
 /**
@@ -53,16 +56,6 @@ function bulk_user_admin_get_users_by_email_domain($domain, $options = array()) 
 }
 
 /**
- * Sets up admin menu. Triggered on pagesetup.
- */
-function bulk_user_admin_admin_page_setup() {
-	if (elgg_in_context('admin') && elgg_is_admin_logged_in()) {
-		elgg_register_admin_menu_item('administer', 'email_domain_stats', 'users');
-		elgg_register_admin_menu_item('administer', 'bulk_user_admin', 'users');
-	}
-}
-
-/**
  * Get number of users per email domain
  *
  * @return array
@@ -77,5 +70,3 @@ function bulk_user_admin_get_email_domain_stats() {
 
 	return get_data($q);
 }
-
-elgg_register_event_handler('init', 'system', 'bulk_user_admin_init');

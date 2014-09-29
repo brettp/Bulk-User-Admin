@@ -6,13 +6,13 @@
  */
 
 // Are we performing a search
-$limit = get_input('limit', 10);
+$limit = get_input('limit', 30);
 $offset = get_input('offset', 0);
 $domain = get_input('domain');
 $title = '';
 
 if ($domain) {
-	$title = "Users in the domain $domain";
+	$title = elgg_echo('bulk_user_admin:title:domains', array($domain));
 }
 
 $options = array(
@@ -35,7 +35,8 @@ if ($domain) {
 $pagination = elgg_view('navigation/pagination', array(
 	'base_url' => current_page_url(),
 	'offset' => $offset,
-	'count' => $users_count
+	'count' => $users_count,
+	'limit' => $limit
 ));
 
 $form_vars = array(
@@ -47,8 +48,9 @@ $form = elgg_view_form('bulk_user_admin/delete', array(), $form_vars);
 $domain_form = '';
 
 if ($domain) {
-	$delete_button = "<br /><br />" . elgg_view('input/submit', array(
-		'value' => 'Delete all in domain',
+	$delete_button = elgg_view('input/submit', array(
+		'value' => elgg_echo('bulk_user_admin:delete:domainall'),
+		'class' => 'mtm elgg-button elgg-button-submit elgg-requires-confirmation'
 	));
 
 	$hidden = elgg_view('input/hidden', array(
@@ -59,19 +61,19 @@ if ($domain) {
 	$form_body = $delete_button . $hidden;
 
 	$domain_form = elgg_view('input/form', array(
-		'action' =>  $site->url . 'action/bulk_user_admin/delete_by_domain',
+		'action' =>  elgg_get_site_url() . 'action/bulk_user_admin/delete_by_domain',
 		'body' => $form_body
 	));
 
 }
 
-$summary = "<div>$users_count user(s) found</div>";
+$summary = "<div>" . elgg_echo('bulk_user_admin:usersfound', array($users_count)) . "</div>";
 
 if ($domain) {
 	$summary .= '<br />';
 	$summary .= elgg_view('output/url', array(
 		'href' => elgg_http_remove_url_query_element(current_page_url(), 'domain'),
-		'text' => 'All users'
+		'text' => elgg_echo('bulk_user_admin:allusers')
 	));
 }
 

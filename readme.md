@@ -1,8 +1,8 @@
 Bulk user Admin
 ===============
 
-(C) 2011 Brett Profitt
-GPL 2
+(C) Brett Profitt 2011-2014
+Licensed under GPL v2
 
 About
 =====

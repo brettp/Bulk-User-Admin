@@ -5,8 +5,8 @@ $domains = $vars['domains'];
 ?>
 <table class="elgg-table">
 	<tr>
-		<th>Domain</th>
-		<th>Registered users</th>
+		<th><?php echo elgg_echo('bulk_user_admin:domain');?></th>
+		<th><?php echo elgg_echo('bulk_user_admin:users');?></th>
 	</tr>
 <?php
 
@@ -20,7 +20,7 @@ foreach ($domains as $domain_info) {
 		'href' => $domain_info->domain
 	));
 
-	$url = elgg_http_add_url_query_elements($vars['url'] . 'admin/users/bulk_user_admin',
+	$url = elgg_http_add_url_query_elements(elgg_get_site_url() . 'admin/users/bulk_user_admin',
 			array('domain' => $domain_info->domain));
 
 	$users = elgg_view('output/url', array(

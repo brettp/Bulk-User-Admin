@@ -20,7 +20,7 @@ while ($users) {
 		if ($user->delete()) {
 			$count++;
 		} else {
-			$errors[] = "Could not delete $user->name ($user->username, $user->guid).";
+			$errors[] = elgg_echo('bulk_user_admin:error:deletefailed', array($user->name, $user->username, $user->guid));
 		}
 	}
 
@@ -33,7 +33,7 @@ if ($errors) {
 		register_error($error);
 	}
 } else {
-	system_message("Users deleted: $count");
+	system_message(elgg_echo('bulk_user_admin:success:delete', array($count)));
 }
 
 forward(REFERER);
