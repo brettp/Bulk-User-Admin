@@ -2,12 +2,12 @@
 <plugin_manifest xmlns="http://www.elgg.org/plugin_manifest/1.8">
 	<name>Bulk User Admin</name>
 	<id>bulk_user_admin</id>
-	<author>Brett Profitt</author>
+	<author>Brett Profitt, iionly (for Elgg 1.9 version)</author>
 	<version>1.9.0</version>
 	<category>admin</category>
 	<description>Delete users in bulk.</description>
 	<website>http://www.elgg.org/</website>
-	<copyright>(C) Brett Profitt 2011-2014</copyright>
+	<copyright>(C) Brett Profitt 2011-2014, (C) iionly 2014</copyright>
 	<license>GNU Public License version 2</license>
 	<requires>
 		<type>elgg_release</type>
