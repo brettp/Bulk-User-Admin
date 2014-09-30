@@ -1,7 +1,8 @@
 Bulk user Admin
 ===============
 
-(C) Brett Profitt 2011-2014
+(C) Brett Profitt 2011-2014, iionly (for Elgg 1.9 version) 2014
+
 Licensed under GPL v2
 
 About
