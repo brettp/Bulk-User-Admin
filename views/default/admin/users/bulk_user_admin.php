@@ -9,10 +9,15 @@
 $limit = get_input('limit', 30);
 $offset = get_input('offset', 0);
 $domain = get_input('domain');
-$title = '';
+$banned = get_input('banned');
+$title = 'Users';
 
 if ($domain) {
 	$title = elgg_echo('bulk_user_admin:title:domains', array($domain));
+}
+
+if ($banned) {
+	$title = "Banned " + $title;
 }
 
 $options = array(
@@ -21,6 +26,12 @@ $options = array(
 	'offset' => $offset,
 	'full_view' => false
 );
+
+if ($banned) {
+	$db_prefix = elgg_get_config("dbprefix");
+	$options['joins'] = array("JOIN {$db_prefix}users_entity ue ON ue.guid = e.guid");
+	$options['wheres'] = array("ue.banned = 'yes'");
+}
 
 if ($domain) {
 	$users = bulk_user_admin_get_users_by_email_domain($domain, $options);
@@ -43,7 +54,7 @@ $form_vars = array(
 	'users' => $users,
 );
 
-$form = elgg_view_form('bulk_user_admin/delete', array(), $form_vars);
+$form = elgg_view_form('bulk_user_admin/delete', array('class' => 'pvl'), $form_vars);
 
 $domain_form = '';
 
@@ -64,10 +75,27 @@ if ($domain) {
 		'action' =>  elgg_get_site_url() . 'action/bulk_user_admin/delete_by_domain',
 		'body' => $form_body
 	));
-
 }
 
 $summary = "<div>" . elgg_echo('bulk_user_admin:usersfound', array($users_count)) . "</div>";
+$options = array(
+	'name' => 'banned',
+	'value' => 1
+);
+if ($banned) {
+	$options['checked'] = 'checked';
+}
+$banned_form_body = '<label>' . elgg_view('input/checkbox', $options) . elgg_echo('bulk_user_admin:banned_only') . '</label>';
+$banned_form_body .= elgg_view('input/submit', array(
+	'value' => elgg_echo('update'),
+	'class' => 'elgg-button elgg-button-action mhm'
+));
+
+$banned_form = elgg_view('input/form', array(
+	'body' => $banned_form_body,
+	'action' => 'admin/users/bulk_user_admin'
+));
+
 
 if ($domain) {
 	$summary .= '<br />';
@@ -79,4 +107,15 @@ if ($domain) {
 
 elgg_set_context('admin');
 
-echo $title . $summary . $pagination . $form . $domain_form . $pagination;
+echo <<<HTML
+$title
+$summary
+$banned_form
+
+$pagination
+$form
+$domain_form
+$pagination
+HTML;
+
+

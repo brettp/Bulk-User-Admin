@@ -27,5 +27,6 @@ return array(
 	'bulk_user_admin:annotationscounts' => 'Annotations: ',
 	'bulk_user_admin:metadatacounts' => 'Metadata: ',
 	'bulk_user_admin:notavailable' => 'N/A',
-	'bulk_user_admin:banned' => 'Banned: '
+	'bulk_user_admin:banned' => 'Banned: ',
+	'bulk_user_admin:banned_only' => 'Only show banned users'
 );
