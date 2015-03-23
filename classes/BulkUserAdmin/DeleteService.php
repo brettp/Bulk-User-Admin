@@ -4,6 +4,7 @@ namespace BulkUserAdmin;
 class DeleteService {
 	private $queue;
 	private $entities;
+	const PENDING_DELETE_MD = 'bulk_user_admin_delete_queued';
 
 	private function __construct(\Elgg\Queue\Queue $queue, \Elgg\Database\EntityTable $entities) {
 		$this->queue = $queue;
@@ -27,7 +28,7 @@ class DeleteService {
 				throw new \UnexpectedValueException("Unexpected entity of type {$user->type}. Expected ElggUser");
 			}
 
-			if (!$user->bulk_user_admin_delete_queued) {
+			if (!$user->{self::PENDING_DELETE_MD}) {
 				throw new \UnexpectedValueException("User incorrectly scheduled for deletion. Not deleting.");
 			}
 			
@@ -39,7 +40,13 @@ class DeleteService {
 		if (!$user instanceof \ElggUser) {
 			throw new \UnexpectedValueException("DeleteService->enqueue() expects an ElggUser object");
 		}
-		$user->bulk_user_admin_delete_queued = true;
+
+		// don't re-enqueue
+		if ($user->{self::PENDING_DELETE_MD}) {
+			return true;
+		}
+		
+		$user->{self::PENDING_DELETE_MD} = true;
 		return $this->queue->enqueue($user);
 	}
 

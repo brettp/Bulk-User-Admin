@@ -18,7 +18,6 @@ $batch = new ElggBatch('elgg_get_entities', array(
 	'guids' => $guids,
 	'limit' => false
 ));
-$batch->setIncrementOffset(false);
 
 foreach ($batch as $user) {
 	if (!$user instanceof ElggUser) {

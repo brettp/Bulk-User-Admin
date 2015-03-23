@@ -83,7 +83,7 @@ function bulk_user_admin_cron() {
 
 function bulk_user_admin_get_sql_where() {
 	$db_prefix = get_config('dbprefix');
-	$name_id = elgg_get_metastring_id('bulk_user_admin_delete_queued');
+	$name_id = elgg_get_metastring_id(\BulkUserAdmin\DeleteService::PENDING_DELETE_MD);
 	$value_id = elgg_get_metastring_id(true);
 
 	return "NOT EXISTS (
