@@ -10,9 +10,14 @@ if (!$guids) {
 	forward(REFERER);
 }
 
+$s = BulkUserAdmin\DeleteService::getService();
+
 $errors = array();
 $count = 0;
-$batch = new ElggBatch('elgg_get_entities', array('guids' => $guids, 'limit' => false));
+$batch = new ElggBatch('elgg_get_entities', array(
+	'guids' => $guids,
+	'limit' => false
+));
 $batch->setIncrementOffset(false);
 
 foreach ($batch as $user) {
@@ -21,11 +26,10 @@ foreach ($batch as $user) {
 		continue;
 	}
 
-	if ($user->delete()) {
-		$count++;
-	} else {
-		$errors[] = elgg_echo('bulk_user_admin:error:deletefailed', array($user->name, $user->username, $user->guid));
+	if (!$s->enqueue($user)) {
+		$errors[] = elgg_echo('bulk_user_admin:error:enqueue_failed', array($user->name, $user->username, $user->guid));
 	}
+	$count++;
 }
 
 if ($errors) {
@@ -33,7 +37,7 @@ if ($errors) {
 		register_error($error);
 	}
 } else {
-	system_message(elgg_echo('bulk_user_admin:success:delete', array($count)));
+	system_message(elgg_echo('bulk_user_admin:enqueue:delete', array($count)));
 }
 
 forward(REFERER);

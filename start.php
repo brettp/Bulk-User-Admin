@@ -17,17 +17,18 @@ function bulk_user_admin_init() {
 	$base_dir = elgg_get_plugins_path() . 'bulk_user_admin/actions/bulk_user_admin';
 	elgg_register_action('bulk_user_admin/delete', $base_dir . '/delete.php', 'admin');
 	elgg_register_action('bulk_user_admin/delete_by_domain', $base_dir . '/delete_by_domain.php', 'admin');
+
+	elgg_register_plugin_hook_handler('cron', 'minute', 'bulk_user_admin_cron');
 }
 
 /**
  * Return users by email domain
  *
- * @param type $domain
  * @param type $options
  * @return array
  */
-function bulk_user_admin_get_users_by_email_domain($domain, $options = array()) {
-	$domain = sanitise_string($domain);
+function bulk_user_admin_get_users_by_email_domain($options = array()) {
+	$domain = sanitise_string($options['domain']);
 	$db_prefix = elgg_get_config('dbprefix');
 
 	$where = "ue.email LIKE '%@$domain'";
@@ -69,4 +70,13 @@ function bulk_user_admin_get_email_domain_stats() {
 		group by domain order by count desc, domain asc;";
 
 	return get_data($q);
+}
+
+/**
+ * @access private
+ */
+function bulk_user_admin_cron() {
+	$stop_time = time() + 45;
+	$s = BulkUserAdmin\DeleteService::getService();
+	$s->process($stop_time);
 }

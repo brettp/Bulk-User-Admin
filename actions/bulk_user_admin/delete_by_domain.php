@@ -4,28 +4,26 @@
  */
 
 $domain = get_input('domain');
+$s = BulkUserAdmin\DeleteService::getService();
 
 $errors = array();
 $count = 0;
+$batch = new ElggBatch('bulk_user_admin_get_users_by_email_domain', array(
+	'domain' => $domain,
+	'limit' => false
+));
+$batch->setIncrementOffset(false);
 
-$options = array(
-	'limit' => 50,
-	'offset' => 0,
-);
-
-$users = bulk_user_admin_get_users_by_email_domain($domain, $options);
-
-while ($users) {
-	foreach ($users as $user) {
-		if ($user->delete()) {
-			$count++;
-		} else {
-			$errors[] = elgg_echo('bulk_user_admin:error:deletefailed', array($user->name, $user->username, $user->guid));
-		}
+foreach ($batch as $user) {
+	if (!$user instanceof ElggUser) {
+		$errors[] = elgg_echo('bulk_user_admin:error:wrongguid', array($user->guid));
+		continue;
 	}
 
-	$options['offset'] = $options['offset'] + $options['limit'];
-	$users = bulk_user_admin_get_users_by_email_domain($domain, $options);
+	if (!$s->enqueue($user)) {
+		$errors[] = elgg_echo('bulk_user_admin:error:enqueue_failed', array($user->name, $user->username, $user->guid));
+	}
+	$count++;
 }
 
 if ($errors) {
@@ -33,7 +31,7 @@ if ($errors) {
 		register_error($error);
 	}
 } else {
-	system_message(elgg_echo('bulk_user_admin:success:delete', array($count)));
+	system_message(elgg_echo('bulk_user_admin:enqueue:delete', array($count)));
 }
 
 forward(REFERER);

@@ -11,6 +11,11 @@ table.bulk-user-admin-users label {
 	text-decoration: line-through;
 }
 
+.bulk-user-admin-enqueued td {
+	background-color: #eee;
+	text-decoration: line-through;
+}
+
 .bulk-user-admin-icon {
 	-moz-border-radius: 4px;
 	-webkit-border-radius: 4px;

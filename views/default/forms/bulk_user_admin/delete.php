@@ -12,7 +12,7 @@ $fields = elgg_get_config('profile_fields');
 
 <table class="elgg-table bulk-user-admin-users">
 	<tr>
-		<th><?php echo elgg_echo('bulk_user_admin:selection');?></th>
+		<th>&nbsp;</th>
 		<th><?php echo elgg_echo('bulk_user_admin:usericon');?></th>
 		<th><?php echo elgg_echo('bulk_user_admin:userinfo');?><br /><?php echo elgg_echo('bulk_user_admin:profileinfo');?></th>
 		<th><?php echo elgg_echo('bulk_user_admin:email');?></th>
@@ -52,8 +52,6 @@ $fields = elgg_get_config('profile_fields');
 		$user_icon .= elgg_view_menu('user_hover', array('entity' => $user, 'username' => $username, 'name' => $name));
 		$user_icon .= "</div>";
 
-		$banned = $user->isBanned();
-
 		foreach (array('time_created', 'last_login', 'last_action') as $ts_name) {
 			$ts = $user->$ts_name;
 			if ($ts) {
@@ -79,10 +77,20 @@ $fields = elgg_get_config('profile_fields');
 		$metadata_count = (int) $data[0]->count;
 		$metadata_count = elgg_echo('bulk_user_admin:metadatacounts') . $metadata_count;
 		
-		$tr_class = $user->isBanned() ? 'class="bulk-user-admin-banned"' : '';
+		$tr_class = '';
+
+		$banned = '';
 		if ($user->isBanned()) {
+			$tr_class .= 'bulk-user-admin-banned';
 			$banned = '<br />' . elgg_echo('bulk_user_admin:banned') . $user->ban_reason;
 		}
+
+		$enqueued = '';
+		if ($user->bulk_user_admin_delete_queued) {
+			$tr_class .= ' bulk-user-admin-enqueued';
+			$enqueued = '<br />' . elgg_echo('bulk_user_admin:enqueued');
+		}
+		
 
 		$profile_field_tmp = array();
 
@@ -104,10 +112,10 @@ $fields = elgg_get_config('profile_fields');
 		}
 
 echo <<<___HTML
-	<tr $tr_class>
+	<tr class="$tr_class">
 		<td><label for="elgg-user-$user->guid">$checkbox</label></td>
 		<td><label for="elgg-user-$user->guid">$user_icon</label></td>
-		<td><label for="elgg-user-$user->guid">$user->name ($user->username, $user->guid) $banned $profile_fields</label></td>
+		<td><label for="elgg-user-$user->guid">$user->name ($user->username, $user->guid) $enqueued $banned $profile_fields</label></td>
 		<td><label for="elgg-user-$user->guid">$user->email</label></td>
 		<td><label for="elgg-user-$user->guid">$time_created<br />$last_login</label></td>
 		<td><label for="elgg-user-$user->guid">$last_action</label></td>
@@ -123,5 +131,6 @@ ___HTML;
 
 echo elgg_view('input/submit', array(
 	'value' => elgg_echo('bulk_user_admin:delete:checked'),
-	'class' => 'mtm elgg-button elgg-button-submit elgg-requires-confirmation'
+	'class' => 'mtm elgg-button elgg-button-submit',
+	'data-confirm' => elgg_echo('bulk_user_admin:delete:checked?')
 ));

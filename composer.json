@@ -1,0 +1,16 @@
+{
+    "name": "brettp/bulk_user_admin",
+    "description": "Elgg plugin to delete users in bulk and by email domain.",
+	"type": "elgg-plugin",
+    "require": {
+        "composer/installers": "~1.0"
+    },
+    "license": "GPL2",
+    "authors": [
+        {
+            "name": "Brett Profitt",
+            "email": "brett@elgg.org"
+        }
+    ],
+    "minimum-stability": "stable"
+}
