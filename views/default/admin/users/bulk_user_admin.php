@@ -36,14 +36,7 @@ if ($banned) {
 }
 
 if (!$include_enqueued) {
-	$db_prefix = get_config('dbprefix');
-	$name_id = elgg_get_metastring_id('bulk_user_admin_delete_queued');
-	$value_id = elgg_get_metastring_id(true);
-	$options['wheres'][] = "NOT EXISTS (
-			SELECT 1 FROM {$db_prefix}metadata md
-			WHERE md.entity_guid = e.guid
-				AND md.name_id = $name_id
-				AND md.value_id = $value_id)";
+	$options['wheres'][] = bulk_user_admin_get_sql_where();
 }
 
 if ($domain) {

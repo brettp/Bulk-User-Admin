@@ -10,7 +10,9 @@ $errors = array();
 $count = 0;
 $batch = new ElggBatch('bulk_user_admin_get_users_by_email_domain', array(
 	'domain' => $domain,
-	'limit' => false
+	'limit' => false,
+	// don't re-enqueue
+	'wheres' => bulk_user_admin_get_sql_where()
 ));
 $batch->setIncrementOffset(false);
 
