@@ -76,7 +76,7 @@ function bulk_user_admin_get_email_domain_stats() {
  * @access private
  */
 function bulk_user_admin_cron() {
-	$stop_time = time() + 45;
+	$stop_time = time() + 30;
 	$s = BulkUserAdmin\DeleteService::getService();
 	$s->process($stop_time);
 }

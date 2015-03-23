@@ -23,15 +23,14 @@ class DeleteService {
 				return;
 			}
 
-			// bad data
+			// don't break on bad data
 			if (!$user instanceof \ElggUser) {
-				throw new \UnexpectedValueException("Unexpected entity of type {$user->type}. Expected ElggUser");
-			}
-
-			if (!$user->{self::PENDING_DELETE_MD}) {
-				throw new \UnexpectedValueException("User incorrectly scheduled for deletion. Not deleting.");
+				echo "Guid: $user->guid. Expected ElggUser, got $user->type<br />\n";
+				return false;
 			}
 			
+			echo "Deleting user $user->username ($user->email, $user->guid)<br />\n";
+
 			$user->delete();
 		}
 	}
@@ -39,11 +38,6 @@ class DeleteService {
 	public function enqueue(\ElggUser $user) {
 		if (!$user instanceof \ElggUser) {
 			throw new \UnexpectedValueException("DeleteService->enqueue() expects an ElggUser object");
-		}
-
-		// don't re-enqueue
-		if ($user->{self::PENDING_DELETE_MD}) {
-			return true;
 		}
 		
 		$user->{self::PENDING_DELETE_MD} = true;
