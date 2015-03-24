@@ -31,7 +31,7 @@ $count = bulk_user_admin_get_users($options);
 $pagination = elgg_view('navigation/pagination', array(
 	'base_url' => current_page_url(),
 	'offset' => $offset,
-	'count' => $users_count,
+	'count' => $count,
 	'limit' => $limit
 ));
 
@@ -78,5 +78,3 @@ $form
 $domain_form
 $pagination
 HTML;
-
-
