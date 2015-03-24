@@ -34,3 +34,7 @@ table.bulk-user-admin-users label {
 	height: 35px;
 	display: inline-block;
 }
+
+.elgg-form-bulk-user-admin-delete {
+	overflow: scroll;
+}
