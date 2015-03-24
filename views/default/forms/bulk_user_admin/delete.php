@@ -110,12 +110,27 @@ $fields = elgg_get_config('profile_fields');
 			$profile_fields = "<br />$profile_fields";
 		}
 
+		$email = '';
+		if ($user->email) {
+			list($email_username, $email_domain) = explode('@', $user->email);
+			$href = elgg_http_add_url_query_elements(elgg_normalize_url('/admin/users/bulk_user_admin'),
+				[
+					'domain' => $email_domain
+				]);
+			$email = $email_username . '@' . elgg_view('output/url', [
+				'text' => $email_domain,
+				'href' => $href,
+				'class' => 'bulk-user-admin-email-domain',
+				'is_trusted' => true
+			]);
+		}
+
 echo <<<___HTML
 	<tr class="$tr_class">
 		<td><label for="elgg-user-$user->guid">$checkbox</label></td>
 		<td><label for="elgg-user-$user->guid">$user_icon</label></td>
 		<td><label for="elgg-user-$user->guid">$user->name ($user->username, $user->guid) $enqueued $banned $profile_fields</label></td>
-		<td><label for="elgg-user-$user->guid">$user->email</label></td>
+		<td>$email</td>
 		<td><label for="elgg-user-$user->guid">$time_created<br />$last_login</label></td>
 		<td><label for="elgg-user-$user->guid">$last_action</label></td>
 		<td><label for="elgg-user-$user->guid">$object_count<br />$annotation_count<br />$metadata_count</label></td>

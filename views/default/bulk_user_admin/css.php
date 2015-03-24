@@ -38,3 +38,7 @@ table.bulk-user-admin-users label {
 .elgg-form-bulk-user-admin-delete {
 	overflow: scroll;
 }
+
+.bulk-user-admin-email-domain {
+	border-bottom: 1px dashed #000;
+}
