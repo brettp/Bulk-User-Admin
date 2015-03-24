@@ -26,3 +26,11 @@ table.bulk-user-admin-users label {
 	margin: 4px;
 	background: #FFFFFF;
 }
+
+.bulk-user-admin-clear {
+	font-size: 120%;
+	font-family: Arial, Helvetica, sans-serif;
+	margin: 0;
+	height: 35px;
+	display: inline-block;
+}

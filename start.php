@@ -31,7 +31,7 @@ function bulk_user_admin_get_users_by_email_domain($options = array()) {
 	$domain = sanitise_string($options['domain']);
 	$db_prefix = elgg_get_config('dbprefix');
 
-	$where = "ue.email LIKE '%@$domain'";
+	$where = "ue.email LIKE '%@%$domain'";
 	if (!isset($options['wheres'])) {
 		$options['wheres'] = array($where);
 	} else {
@@ -81,7 +81,7 @@ function bulk_user_admin_cron() {
 	$s->process($stop_time);
 }
 
-function bulk_user_admin_get_sql_where() {
+function bulk_user_admin_get_sql_where_not_enqueued() {
 	$db_prefix = get_config('dbprefix');
 	$name_id = elgg_get_metastring_id(\BulkUserAdmin\DeleteService::PENDING_DELETE_MD);
 	$value_id = elgg_get_metastring_id(true);

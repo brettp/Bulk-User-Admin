@@ -91,7 +91,6 @@ $fields = elgg_get_config('profile_fields');
 			$enqueued = '<br />' . elgg_echo('bulk_user_admin:enqueued');
 		}
 		
-
 		$profile_field_tmp = array();
 
 		foreach (array_keys($fields) as $md_name) {

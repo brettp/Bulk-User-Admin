@@ -20,8 +20,12 @@ foreach ($domains as $domain_info) {
 		'href' => $domain_info->domain
 	));
 
-	$url = elgg_http_add_url_query_elements(elgg_get_site_url() . 'admin/users/bulk_user_admin',
-			array('domain' => $domain_info->domain));
+	$url = elgg_http_add_url_query_elements(elgg_normalize_url('/admin/users/bulk_user_admin'),
+		[
+			'domain' => $domain_info->domain,
+			'include_enqueued' => true
+		]
+	);
 
 	$users = elgg_view('output/url', array(
 		'text' => $domain_info->count,

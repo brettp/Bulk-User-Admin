@@ -9,6 +9,7 @@ return array(
 	'bulk_user_admin:enqueue:delete' => 'Users scheduled to be deleted: %s.',
 	'bulk_user_admin:title:domains' => 'Users in the domain %s',
 	'bulk_user_admin:domain' => 'Domain',
+	'bulk_user_admin:domain:help' => 'Show users with email addresses that end in this text. e.g., "mail.com" will match mail.com, hotmail.com, and gmail.com, but not mail.yahoo.com',
 	'bulk_user_admin:users' => 'Registered users',
 	'bulk_user_admin:delete:domainall' => 'Schedule all unscheduled users in domain %s to be deleted',
 	'bulk_user_admin:delete:domainall?' => 'Schedule all unscheduled users in domain %s to be deleted?',
@@ -32,5 +33,8 @@ return array(
 	'bulk_user_admin:banned' => 'Banned: ',
 	'bulk_user_admin:banned_only' => 'Only show banned users',
 	'bulk_user_admin:include_enqueued' => 'Include users pending deletion',
-	'bulk_user_admin:enqueued' => 'Scheduled for deletion.'
+	'bulk_user_admin:enqueued' => 'Scheduled for deletion.',
+	'bulk_user_admin:clear' => 'Clear',
+	'bulk_user_admin:filters' => 'Filters',
+	'bulk_user_admin:add_filters' => 'Add filters',
 );
