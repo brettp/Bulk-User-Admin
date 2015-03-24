@@ -22,41 +22,6 @@ function bulk_user_admin_init() {
 }
 
 /**
- * Return users by email domain
- *
- * @param type $options
- * @return array
- */
-function bulk_user_admin_get_users_by_email_domain($options = array()) {
-	$domain = sanitise_string($options['domain']);
-	$db_prefix = elgg_get_config('dbprefix');
-
-	$where = "ue.email LIKE '%@%$domain'";
-	if (!isset($options['wheres'])) {
-		$options['wheres'] = array($where);
-	} else {
-		if (!is_array($options['wheres'])) {
-			$options['wheres'] = array($options['wheres']);
-		}
-		$options['wheres'][] = $where;
-	}
-
-	$join = "JOIN {$db_prefix}users_entity ue on e.guid = ue.guid";
-	if (!isset($options['joins'])) {
-		$options['joins'] = array($join);
-	} else {
-		if (!is_array($options['joins'])) {
-			$options['joins'] = array($options['joins']);
-		}
-		$options['joins'][] = $join;
-	}
-
-	$options['type'] = 'user';
-
-	return elgg_get_entities($options);
-}
-
-/**
  * Get number of users per email domain
  *
  * @return array
@@ -91,4 +56,62 @@ function bulk_user_admin_get_sql_where_not_enqueued() {
 			WHERE md.entity_guid = e.guid
 				AND md.name_id = $name_id
 				AND md.value_id = $value_id)";
+}
+
+/**
+ * Get users with a few more options
+ *
+ * domain => Match the last part of the email address
+ * only_banned => Only return banned users
+ * enqueued => include|exclude|only users enqueued to be deleted (default = exclude, other values = doesn't matter)
+ *
+ * @param array $sent Options
+ */
+function bulk_user_admin_get_users(array $sent) {
+	$db_prefix = elgg_get_config('dbprefix');
+	$defaults = [
+		'type' => 'user',
+		'domain' => false,
+		'only_banned' => false,
+		'enqueued' => 'exclude'
+	];
+
+	$options = array_merge($defaults, $sent);
+
+	if (!is_array($options['wheres'])) {
+		$options['wheres'] = [];
+	}
+
+	if (!is_array($options['joins'])) {
+		$options['joins'] = [];
+	}
+
+	// sometimes ue is joined, sometimes it's not...
+	// use our own join to make sure.
+	$options['joins'][]= "JOIN {$db_prefix}users_entity bua_ue on e.guid = bua_ue.guid";
+
+	if ($options['domain']) {
+		$options['wheres'][] = "bua_ue.email LIKE '%@%{$options['domain']}'";
+	}
+
+	if ($options['only_banned']) {
+		$options['wheres'][] = "bua_ue.banned = 'yes'";
+	}
+
+	switch ($options['enqueued']) {
+		case 'include':
+			// no-op
+			break;
+
+		case 'only':
+			$options['metadata_name'] = \BulkUserAdmin\DeleteService::PENDING_DELETE_MD;
+			break;
+
+		case 'exclude':
+		default:
+			$options['wheres'][] = bulk_user_admin_get_sql_where_not_enqueued();
+			break;
+	}
+
+	return elgg_get_entities_from_metadata($options);
 }

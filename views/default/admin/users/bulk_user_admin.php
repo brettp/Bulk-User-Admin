@@ -12,39 +12,21 @@ $domain = get_input('domain');
 $banned = get_input('banned');
 $include_enqueued = get_input('include_enqueued');
 
+$db_prefix = elgg_get_config("dbprefix");
 $options = array(
 	'type' => 'user',
 	'limit' => $limit,
 	'offset' => $offset,
 	'full_view' => false,
+	'only_banned' => $banned,
+	'domain' => $domain,
+	'enqueued' => $include_enqueued ? 'include' : 'exclude'
 );
 
-$filter_class = 'hidden';
+$users = bulk_user_admin_get_users($options);
 
-if ($banned) {
-	$db_prefix = elgg_get_config("dbprefix");
-	$options['joins'] = array("JOIN {$db_prefix}users_entity ue ON ue.guid = e.guid");
-	$options['wheres'] = array("ue.banned = 'yes'");
-	$filter_class = '';
-}
-
-if (!$include_enqueued) {
-	$options['wheres'][] = bulk_user_admin_get_sql_where_not_enqueued();
-} else {
-	$filter_class = '';
-}
-
-if ($domain) {
-	$options['domain'] = $domain;
-	$users = bulk_user_admin_get_users_by_email_domain($options);
-	$options['count'] = true;
-	$users_count = bulk_user_admin_get_users_by_email_domain($options);
-	$filter_class = '';
-} else {
-	$users = elgg_get_entities($options);
-	$options['count'] = true;
-	$users_count = elgg_get_entities($options);
-}
+$options['count'] = true;
+$count = bulk_user_admin_get_users($options);
 
 $pagination = elgg_view('navigation/pagination', array(
 	'base_url' => current_page_url(),
@@ -53,10 +35,15 @@ $pagination = elgg_view('navigation/pagination', array(
 	'limit' => $limit
 ));
 
-$form_vars = array(
+$form_vars = [
 	'users' => $users,
-);
+	'banned' => $banned,
+	'domain' => $domain,
+	'include_enqueued' => $include_enqueued,
+	'options' => $options
+];
 
+$form_filter = elgg_view('bulk_user_admin/form_filter', array_merge($vars, $form_vars));
 $form = elgg_view_form('bulk_user_admin/delete', array('class' => 'pvl'), $form_vars);
 
 $domain_form = '';
@@ -81,85 +68,10 @@ if ($domain) {
 	));
 }
 
-$options = array(
-	'name' => 'banned',
-	'value' => 1
-);
-if ($banned) {
-	$options['checked'] = 'checked';
-}
-$filter_body = '<p><label>' . elgg_view('input/checkbox', $options)
-		. elgg_echo('bulk_user_admin:banned_only') . '</label></p>';
-
-$options = array(
-	'name' => 'include_enqueued',
-	'value' => 1
-);
-if ($include_enqueued) {
-	$options['checked'] = 'checked';
-}
-$filter_body .= '<p><label>' . elgg_view('input/checkbox', $options)
-		. elgg_echo('bulk_user_admin:include_enqueued') . '</label></p>';
-
-$options = array(
-	'name' => 'domain',
-	'value' => $domain,
-	'class' => 'elgg-input-thin'
-);
-
-$input = elgg_view('input/text', $options);
-$label = elgg_echo('bulk_user_admin:domain');
-$help = elgg_echo('bulk_user_admin:domain:help');
-
-$filter_body .=<<<HTML
-<p>
-	<label>
-	$label
-	$input
-	</label>
-	<span class='elgg-text-help'>$help</span>
-</p>
-HTML;
-
-$filter_body .= elgg_view('input/submit', array(
-	'value' => elgg_echo('update'),
-	'class' => 'elgg-button elgg-button-action mhm'
-));
-
-$filter_body .= elgg_view('output/url', array(
-	'text' => elgg_echo('bulk_user_admin:clear'),
-	'class' => 'bulk-user-admin-clear elgg-button elgg-button-action mhm',
-	'href' => '/admin/users/bulk_user_admin'
-));
-
-$filter_form = elgg_view('input/form', array(
-	'body' => $filter_body,
-	'action' => 'admin/users/bulk_user_admin',
-	'method' => 'get',
-	'disable_security' => true
-));
-
-$filter_toggle = '';
-if ($filter_class == 'hidden') {
-	$filter_toggle = elgg_view('output/url', [
-		'text' => elgg_echo('bulk_user_admin:add_filters'),
-		'href' => '#bulk-user-admin-filter',
-		'rel' => 'toggle',
-		'is_trusted' => true,
-		'class' => 'elgg-button elgg-button-action'
-	]);
-}
-
 elgg_set_context('admin');
 
-$legend = elgg_echo('bulk_user_admin:filters');
-
 echo <<<HTML
-$filter_toggle
-<fieldset id="bulk-user-admin-filter" class="elgg-fieldset mtm $filter_class">
-	<legend>$legend</legend>
-	$filter_form
-</fieldset>
+$form_filter
 
 $pagination
 $form

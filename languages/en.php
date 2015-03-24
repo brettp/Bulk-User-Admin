@@ -31,10 +31,11 @@ return array(
 	'bulk_user_admin:metadatacounts' => 'Metadata: ',
 	'bulk_user_admin:notavailable' => 'N/A',
 	'bulk_user_admin:banned' => 'Banned: ',
-	'bulk_user_admin:banned_only' => 'Only show banned users',
-	'bulk_user_admin:include_enqueued' => 'Include users pending deletion',
+	'bulk_user_admin:banned_only' => 'Only banned users (%s total)',
+	'bulk_user_admin:include_enqueued' => 'Include users pending deletion (+%s more)',
 	'bulk_user_admin:enqueued' => 'Scheduled for deletion.',
 	'bulk_user_admin:clear' => 'Clear',
 	'bulk_user_admin:filters' => 'Filters',
 	'bulk_user_admin:add_filters' => 'Add filters',
+	'bulk_user_admin:domain_count' => '(%s in domain)',
 );

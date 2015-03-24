@@ -5,6 +5,9 @@
 
 $db_prefix = elgg_get_config('dbprefix');
 $users = elgg_extract('users', $vars);
+$domain = elgg_extract('domain', $vars);
+$only_banned = elgg_extract('banned', $vars);
+$include_enqueued = elgg_extract('include_enqueued', $vars);
 
 // profile fields
 $fields = elgg_get_config('profile_fields');
@@ -115,7 +118,9 @@ $fields = elgg_get_config('profile_fields');
 			list($email_username, $email_domain) = explode('@', $user->email);
 			$href = elgg_http_add_url_query_elements(elgg_normalize_url('/admin/users/bulk_user_admin'),
 				[
-					'domain' => $email_domain
+					'domain' => $email_domain,
+					'banned' => $only_banned,
+					'include_enqueued' => $include_enqueued
 				]);
 			$email = $email_username . '@' . elgg_view('output/url', [
 				'text' => $email_domain,
@@ -143,6 +148,26 @@ ___HTML;
 
 <?php
 
+if ($domain) {
+	echo elgg_view('input/hidden', [
+		'name' => 'domain',
+		'value' => $domain
+	]);
+}
+
+if ($only_banned) {
+	echo elgg_view('input/hidden', [
+		'name' => 'banned',
+		'value' => $only_banned
+	]);
+}
+
+if ($include_enqueued) {
+	echo elgg_view('input/hidden', [
+		'name' => 'include_enqueued',
+		'value' => $include_enqueued
+	]);
+}
 echo elgg_view('input/submit', array(
 	'value' => elgg_echo('bulk_user_admin:delete:checked'),
 	'class' => 'mtm elgg-button elgg-button-submit',
