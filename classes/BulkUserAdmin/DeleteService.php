@@ -12,9 +12,9 @@ class DeleteService {
 	}
 
 	public function process($end_ts) {
-		_elgg_services()->access->setIgnoreAccess(true);
-		access_show_hidden_entities(true);
-		
+		$ia = elgg_set_ignore_access(true);
+		$show_hidden = access_show_hidden_entities(true);
+
 		while (time() < $end_ts) {
 			$user = $this->queue->dequeue();
 
@@ -28,18 +28,21 @@ class DeleteService {
 				echo "Guid: $user->guid. Expected ElggUser, got $user->type<br />\n";
 				return false;
 			}
-			
+
 			echo "Deleting user $user->username ($user->email, $user->guid)<br />\n";
 
 			$user->delete();
 		}
+
+		elgg_set_ignore_access($ia);
+		access_show_hidden_entities($show_hidden);
 	}
 
 	public function enqueue(\ElggUser $user) {
 		if (!$user instanceof \ElggUser) {
 			throw new \UnexpectedValueException("DeleteService->enqueue() expects an ElggUser object");
 		}
-		
+
 		$user->{self::PENDING_DELETE_MD} = true;
 		return $this->queue->enqueue($user);
 	}
