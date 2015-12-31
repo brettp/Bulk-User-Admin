@@ -12,8 +12,8 @@ class DeleteService {
 	}
 
 	public function process($end_ts) {
-		elgg_set_ignore_access(true);
-		access_show_hidden_entities(true);
+		$ia = elgg_set_ignore_access(true);
+		$show_hidden = access_show_hidden_entities(true);
 
 		while (time() < $end_ts) {
 			$user = $this->queue->dequeue();
@@ -33,6 +33,9 @@ class DeleteService {
 
 			$user->delete();
 		}
+
+		elgg_set_ignore_access($ia);
+		access_show_hidden_entities($show_hidden);
 	}
 
 	public function enqueue(\ElggUser $user) {
