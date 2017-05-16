@@ -3,6 +3,8 @@
  * Form to delete users
  */
 
+
+
 $db_prefix = elgg_get_config('dbprefix');
 $users = elgg_extract('users', $vars);
 $domain = elgg_extract('domain', $vars);
@@ -11,11 +13,12 @@ $include_enqueued = elgg_extract('include_enqueued', $vars);
 
 // profile fields
 $fields = elgg_get_config('profile_fields');
+
 ?>
 
 <table class="elgg-table bulk-user-admin-users">
 	<tr>
-		<th>&nbsp;</th>
+		<th><input type="checkbox" id="checkAll"></th>
 		<th><?php echo elgg_echo('bulk_user_admin:usericon');?></th>
 		<th><?php echo elgg_echo('bulk_user_admin:userinfo');?><br /><?php echo elgg_echo('bulk_user_admin:profileinfo');?></th>
 		<th><?php echo elgg_echo('bulk_user_admin:email');?></th>
@@ -79,7 +82,7 @@ $fields = elgg_get_config('profile_fields');
 		$data = get_data($q);
 		$metadata_count = (int) $data[0]->count;
 		$metadata_count = elgg_echo('bulk_user_admin:metadatacounts') . $metadata_count;
-		
+
 		$tr_class = '';
 
 		$banned = '';
@@ -93,12 +96,12 @@ $fields = elgg_get_config('profile_fields');
 			$tr_class .= ' bulk-user-admin-enqueued';
 			$enqueued = '<br />' . elgg_echo('bulk_user_admin:enqueued');
 		}
-		
+
 		$profile_field_tmp = array();
 
 		foreach (array_keys($fields) as $md_name) {
 			$value = $user->$md_name;
-			
+
 			if ($value) {
 				$value_short = elgg_get_excerpt($value, 100);
 
@@ -143,7 +146,7 @@ echo <<<___HTML
 ___HTML;
 	}
 ?>
-	
+
 </table>
 
 <?php

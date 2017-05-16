@@ -4,7 +4,7 @@
  *
  * Also used to show the search by domain results
  */
-
+elgg_require_js("bulk_user_admin/checkbox");
 // Are we performing a search
 $limit = get_input('limit', 30);
 $offset = get_input('offset', 0);
